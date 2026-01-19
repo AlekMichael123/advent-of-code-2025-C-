@@ -1,7 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.JavaScript;
-
-namespace Advent_Of_Code_CS.AdventOfCode.Year.AOC2025;
+﻿namespace Advent_Of_Code_CS.AdventOfCode.Year.AOC2025;
 
 public class Day1 : Day
 {
@@ -9,13 +6,16 @@ public class Day1 : Day
   {
     var dial = new Dial();
     var result = _parseInput(input)
-      .Count(instruction => dial.Turn(instruction.direction, instruction.amount));
+      .Count(instruction => dial.TurnAndPointsAtZero(instruction.direction, instruction.amount));
     Console.WriteLine($"Number of times passing zero: {result}");
   }
 
   public override void Part2(string input)
   {
-    Console.WriteLine($"Running Day 1: {input}");
+    var dial = new Dial();
+    var result = _parseInput(input)
+      .Sum(instruction => dial.TurnCountAllZeroInstances(instruction.direction, instruction.amount));
+    Console.WriteLine($"Number of times hitting zero: {result}");
   }
 
   private (char direction, int amount)[] _parseInput(string input) =>
@@ -28,7 +28,7 @@ public class Day1 : Day
   {
     private int _position = 50;
 
-    public bool Turn(char direction, int amount)
+    public bool TurnAndPointsAtZero(char direction, int amount)
     {
       switch (direction)
       {
@@ -47,5 +47,46 @@ public class Day1 : Day
       
       return _position == 0;
     }
+    public int TurnCountAllZeroInstances(char direction, int amount)
+    {
+      var start = _position;
+      var count = 0;
+
+      var fullLoops = amount / 100;
+      var remainder = amount % 100;
+      
+      count += fullLoops;
+
+      if (remainder > 0)
+      {
+        switch (direction)
+        {
+          case 'R':
+          {
+            if (start + remainder >= 100)
+              count++;
+            break;
+          }
+          case 'L':
+          {
+            if (start - remainder <= 0)
+              count++;
+            break;
+          }
+          default:
+            throw new ArgumentException($"Invalid direction: {direction}");
+        }
+      }
+
+      if (start == 0 && count > 0 && fullLoops != count)
+        count--;
+
+      _position = direction == 'R'
+        ? (start + remainder) % 100
+        : (start - (remainder) + 100) % 100;
+
+      return count;
+    }
+
   }
 }

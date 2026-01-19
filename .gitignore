@@ -1,0 +1,12 @@
+﻿# .NET build output
+bin/
+obj/
+
+# Rider / JetBrains
+.idea/
+*.user
+*.suo
+
+# OS junk
+.DS_Store
+Thumbs.db

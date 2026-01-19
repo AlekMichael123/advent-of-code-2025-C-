@@ -62,17 +62,13 @@ public class Day1 : Day
         switch (direction)
         {
           case 'R':
-          {
             if (start + remainder >= 100)
               count++;
             break;
-          }
           case 'L':
-          {
             if (start - remainder <= 0)
               count++;
             break;
-          }
           default:
             throw new ArgumentException($"Invalid direction: {direction}");
         }

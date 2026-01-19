@@ -41,13 +41,11 @@ public class Day1 : Day
         default:
           throw new ArgumentException($"Invalid direction: {direction}");
       }
-      
-      var hitZero = _position is < 0 or > 99;
 
       if (_position < 0) _position += 100;
       _position %= 100;
       
-      return hitZero;
+      return _position == 0;
     }
   }
 }

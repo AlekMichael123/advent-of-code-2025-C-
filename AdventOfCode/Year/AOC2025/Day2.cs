@@ -8,9 +8,9 @@ public class Day2 : Day
     long result = 0;
     foreach (var (start, end) in parsedInput)
     {
-      for (var i = long.Parse(start); i <= long.Parse(end); i++)
+      for (var value = long.Parse(start); value <= long.Parse(end); value++)
       {
-        if (_isInvalid(i.ToString())) result += i;
+        if (_isInvalidPart1(value.ToString())) result += value;
       }
     }
     
@@ -19,7 +19,21 @@ public class Day2 : Day
 
   public override void Part2(string input)
   {
-    throw new NotImplementedException();
+    var parsedInput = _parseInput(input);
+    long result = 0;
+    foreach (var (start, end) in parsedInput)
+    {
+      for (var value = long.Parse(start); value <= long.Parse(end); value++)
+      {
+        var valueString = value.ToString();
+        if (valueString.Where((_, j) => _isInvalidPart2(valueString[0..j], valueString)).Any())
+        {
+          result += value;
+        }
+      }
+    }
+    
+    Console.WriteLine($"Sum of all invalid IDs: {result}");
   }
 
   private (string start, string end)[] _parseInput(string input) =>
@@ -29,6 +43,9 @@ public class Day2 : Day
       .Select(e => (first: e.First(), second: e.Last()))
       .ToArray();
 
-  private bool _isInvalid(string value) =>
+  private bool _isInvalidPart1(string value) =>
     value[0..(value.Length / 2)] == value[(value.Length / 2)..];
+
+  private bool _isInvalidPart2(string substr, string value) =>
+    (value.Split(substr).Length - 1) * substr.Length == value.Length;
 }

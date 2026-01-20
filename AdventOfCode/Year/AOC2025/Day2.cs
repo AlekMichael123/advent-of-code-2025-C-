@@ -40,7 +40,7 @@ public class Day2 : Day
     input
       .Split(',')
       .Select(e => e.Split('-'))
-      .Select(e => (first: e.First(), second: e.Last()))
+      .Select(e => (e.First(), e.Last()))
       .ToArray();
 
   private bool _isInvalidPart1(string value) =>

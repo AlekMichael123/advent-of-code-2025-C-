@@ -4,9 +4,8 @@ public class Day2 : Day
 {
   public override void Part1(string input)
   {
-    var parsedInput = _parseInput(input);
     long result = 0;
-    foreach (var (start, end) in parsedInput)
+    foreach (var (start, end) in _parseInput(input))
     {
       for (var value = long.Parse(start); value <= long.Parse(end); value++)
       {
@@ -19,9 +18,8 @@ public class Day2 : Day
 
   public override void Part2(string input)
   {
-    var parsedInput = _parseInput(input);
     long result = 0;
-    foreach (var (start, end) in parsedInput)
+    foreach (var (start, end) in _parseInput(input))
     {
       for (var value = long.Parse(start); value <= long.Parse(end); value++)
       {

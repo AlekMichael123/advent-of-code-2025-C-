@@ -7,6 +7,7 @@ Dictionary<string, Dictionary<string, Day>> solutions = new()
     "2025", 
     new () {
       { "1",  new Day1() },
+      { "2",  new Day2() },
     } 
   },
 };

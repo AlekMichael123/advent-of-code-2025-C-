@@ -16,7 +16,30 @@ public class Day4 : Day
 
   public override void Part2(string input)
   {
-    throw new NotImplementedException();
+    var diagram = _parseInput(input);
+    var result = 0;
+    var change = true;
+    while (change)
+    {
+      change = false;
+      
+      var toRemove = new List<(int, int)>();
+      foreach (var (line, row) in diagram.Select((line, row) => (line, row)))
+      {
+        foreach (var (cell, col) in line.Select((cell, col) => (cell, col)))
+        {
+          if (cell != '@') continue; 
+          var isValid = _isValidRoll(diagram, row, col);
+          result += isValid ? 1 : 0;
+          if (isValid) toRemove.Add((row, col));
+        }
+      }
+
+      if (toRemove.Count > 0) change = true;
+      foreach (var (row, col) in toRemove) diagram[row][col] = '.';
+    }
+    
+    Console.WriteLine($"Total rolls accessible: {result}");
   }
 
   private bool _isValidRoll(char[][] diagram, int row, int col)

@@ -6,13 +6,11 @@ public class Day4 : Day
   {
     var diagram = _parseInput(input);
     var result = 0;
+    
     foreach (var (line, row) in diagram.Select((line, row) => (line, row)))
-    {
       foreach (var (cell, col) in line.Select((cell, col) => (cell, col)))
-      {
         result += cell == '@' && _isValidRoll(diagram, row, col) ? 1 : 0;
-      }
-    }
+    
     Console.WriteLine($"Total rolls accessible: {result}");
   }
 

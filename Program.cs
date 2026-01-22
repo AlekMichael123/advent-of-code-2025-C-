@@ -11,6 +11,7 @@ Dictionary<string, Dictionary<string, Day>> solutions = new()
       { "3",  new Day3() },
       { "4",  new Day4() },
       { "5",  new Day5() },
+      { "6",  new Day6() },
     } 
   },
 };

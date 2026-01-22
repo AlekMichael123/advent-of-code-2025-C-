@@ -10,13 +10,14 @@ public class Day5 : Day
   {
     var (idRanges, ids) = _parseInput(input);
     var result = ids.Count(id => idRanges.Select(range => id >= range.start && id <= range.end).Any(condition => condition));
-
     Console.WriteLine($"Number of fresh ingredients: {result}");
   }
 
   public override void Part2(string input)
   {
-    throw new NotImplementedException();
+    var (idRanges, _) =  _parseInput(input);
+    var result = idRanges.Select(range => range.end - range.start + 1).Sum();
+    Console.WriteLine($"Total number of fresh ingredients: {result}");
   }
 
   private (IDRange[] idRanges, double[] ids) _parseInput(string input)
@@ -30,12 +31,31 @@ public class Day5 : Day
         .Select((pair) => (pair[0], pair[1]))
         .ToArray();
     var ids = lines[(dividingIndex + 1)..].Select(double.Parse).ToArray();
-    return (idRanges, ids);
+    return (_combineIdRanges(idRanges), ids);
   }
 
-  // private IDRange[] _combineIdRanges(IDRange[] idRanges)
-  // {
-  //   var queue = new Queue(idRanges);
-  //   var result = new List<
-  // }
+  private IDRange[] _combineIdRanges(IDRange[] idRanges)
+  {
+    var queue = new Queue<IDRange>(idRanges.OrderBy(range => range.start));
+    var result = new List<IDRange>();
+
+    while (queue.Count > 0)
+    {
+      var idRange = queue.Dequeue();
+      var next = new Queue<IDRange>();
+      while (queue.Count > 0)
+      {
+        var compare = queue.Dequeue();
+        if (idRange.start <= compare.end && compare.start <= idRange.end)
+          idRange.end = Math.Max(idRange.end, compare.end);
+        else
+          next.Enqueue(compare);
+      }
+
+      queue = next;
+      result.Add(idRange);
+    }
+    
+    return result.ToArray();
+  }
 }

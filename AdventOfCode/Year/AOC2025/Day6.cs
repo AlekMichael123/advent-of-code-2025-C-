@@ -1,7 +1,4 @@
-﻿using System.Globalization;
-using System.Text;
-
-namespace Advent_Of_Code_CS.AdventOfCode.Year.AOC2025;
+﻿namespace Advent_Of_Code_CS.AdventOfCode.Year.AOC2025;
 
 public class Day6 : Day
 {

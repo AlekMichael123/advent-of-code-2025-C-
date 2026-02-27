@@ -7,16 +7,12 @@ public class Day6 : Day
 {
   public override void Part1(string input)
   {
-    var (numbersRows, operations) = _parseInput(input);
+    var (numbersRows, operations) = _parseInput(input, parseHorizontally: true);
     var result = 0D;
     for (var j = 0; j < numbersRows.First().Length; j++)
     {
-      var values = numbersRows.Select(t => t[j]).ToList();
-      var total =
-        values.Aggregate(operations[j] == '*' ? 1D : 0D, (current, value) =>
-          operations[j] == '*'
-            ? value * current
-            : value + current);
+      var values = numbersRows.Select(t => t[j]).ToArray();
+      var total = _calculateOperation(values, operations[j]);
       result += total;
     }
 
@@ -25,112 +21,83 @@ public class Day6 : Day
 
   public override void Part2(string input)
   {
-    var (numbersCols, operations) = _parseInputVertical(input);
-    var result = 0D;
+    var (numbersCols, operations) = _parseInput(input, parseHorizontally: false);
     var op = 0;
-    foreach (var values in numbersCols)
-    {
-      Console.Write("[");
-      foreach (var val  in values) Console.Write($"{val},");
-      Console.Write("]\n");
-      
-      var total = 
-        values.Aggregate(operations[op] == '*' ? 1D : 0D, (current, value) =>
-          operations[op] == '*'
-            ? value * current
-            : value + current);
-      op += 1;
-      result += total;
-    }
-    // for (var j = 0; j < numbersCols.First().Length; j++)
-    // {
-    //   var values = numbersCols.Select(t => t[j]).ToList();
-    //   var total =
-    //     values.Aggregate(operations[j] == '*' ? 1D : 0D, (current, value) =>
-    //       operations[j] == '*'
-    //         ? value * current
-    //         : value + current);
-    //   result += total;
-    // }
-
+    var result = numbersCols.Sum(values => _calculateOperation(values, operations[op++]));
     Console.WriteLine($"Sum of all equations: {result}");
   }
 
+  private double _calculateOperation(double[] values, char operation) =>
+    values.Aggregate(operation == '*' ? 1D : 0D, (current, value) =>
+      operation == '*'
+        ? value * current
+        : value + current);
 
-  private (double[][] numbersRows, char[] operations) _parseInput(string input)
+  private (double[][] numbersRows, char[] operations) _parseInput(string input, bool parseHorizontally)
   {
     var lines = input.Split('\n');
     var (numbersStrings, operationsString) = (lines[..^1], lines.Last());
     var numbersRows = 
-      numbersStrings
-        .Select(str => 
-          str
-            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
-            .Select(double.Parse)
-            .ToArray())
-        .ToArray();
-    var operations = 
-      operationsString
-        .Split(' ', StringSplitOptions.RemoveEmptyEntries)
-        .Select(s => s.Trim()[0])
-        .ToArray();
+      parseHorizontally
+      ? _parseNumbersHorizontally(numbersStrings)
+      : _parseNumbersVertically(numbersStrings);
+    var operations = _parseOperations(operationsString);
     return (numbersRows, operations);
   }
   
-  private (double[][] numberCols, char[] operations) _parseInputVertical(string input)
+  private char[] _parseOperations(string operationsString) =>
+    operationsString
+      .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+      .Select(s => s.Trim()[0])
+      .ToArray();
+  
+  private double[][] _parseNumbersHorizontally(string[] numbersStrings) =>
+    numbersStrings
+      .Select(str =>
+        str
+          .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+          .Select(double.Parse)
+          .ToArray())
+      .ToArray();
+  
+  private double[][] _parseNumbersVertically(string[] lines)
   {
-    var lines = input.Split('\n');
-    var (numberCols, operationsString) = (_parseNumbersVertical(lines[..^1]), lines.Last());
-    var operations = 
-      operationsString
-        .Split(' ', StringSplitOptions.RemoveEmptyEntries)
-        .Select(s => s.Trim()[0])
-        .ToArray();
-    return (numberCols, operations);
-  }
-  private double[][] _parseNumbersVertical(string[] lines)
-  {
+    // could not find a very clean way to do this :(
+    var height = lines.Length;
+    var width = lines.Max(l => l.Length);
 
-    int height = lines.Length;
-    int width = lines.Max(l => l.Length);
-
-    // Pad lines so indexing is safe
     var grid = lines
       .Select(l => l.PadRight(width))
       .ToArray();
 
     var result = new List<double[]>();
 
-    int col = 0;
+    var col = 0;
 
     while (col < width)
     {
-      // Skip empty vertical space
       if (!grid.Any(row => char.IsDigit(row[col])))
       {
         col++;
         continue;
       }
 
-      // Found start of a visual number column block
-      int start = col;
+      var start = col;
 
-      // Move until column no longer contains digits
       while (col < width && grid.Any(row => char.IsDigit(row[col])))
         col++;
 
-      int end = col;
+      var end = col;
 
-      // Now process this visual block
       var numbers = new List<double>();
 
-      for (int digitCol = start; digitCol < end; digitCol++)
+      for (var digitCol = start; digitCol < end; digitCol++)
       {
-        string current = "";
+        var current = "";
 
-        for (int row = 0; row < height; row++)
+        for (var row = 0; row < height; row++)
         {
-          char c = grid[row][digitCol];
+          var c = grid[row][digitCol];
 
           if (char.IsDigit(c))
             current += c;

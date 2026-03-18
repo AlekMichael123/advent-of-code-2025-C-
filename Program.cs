@@ -25,8 +25,18 @@ Console.WriteLine($"Running Year {year} Day {day}");
 var input = File.ReadAllText("input.txt");
 
 var sw = System.Diagnostics.Stopwatch.StartNew();
-Console.WriteLine("Part 1");
-solutions[year][day].Part1(input);
-Console.WriteLine("Part 2");
-solutions[year][day].Part2(input);
-Console.WriteLine($"Elapsed: {sw.ElapsedMilliseconds}ms");
+try
+{
+  Console.WriteLine("Part 1");
+  solutions[year][day].Part1(input);
+  Console.WriteLine("Part 2");
+  solutions[year][day].Part2(input);
+}
+catch (Exception e)
+{
+  Console.WriteLine(e.Message);
+}
+finally
+{
+  Console.WriteLine($"Elapsed: {sw.ElapsedMilliseconds}ms");
+}

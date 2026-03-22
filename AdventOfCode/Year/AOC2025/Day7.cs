@@ -56,7 +56,7 @@ public class Day7 : Day
     while (true)
     {
       Position nextPosition = (currentPosition.X + DirectionOffset.X, currentPosition.Y + DirectionOffset.Y);
-      if (memo.TryGetValue(nextPosition, out var value2)) return value2;
+      if (memo.TryGetValue(nextPosition, out var pastResult)) return pastResult;
       
       if (nextPosition.Y >= board.Length || nextPosition.X < 0 || nextPosition.X >= board.First().Length)
       {

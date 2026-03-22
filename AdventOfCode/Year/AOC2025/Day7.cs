@@ -15,15 +15,20 @@ public class Day7 : Day
 
   public override void Part2(string input)
   {
-    throw new NotImplementedException();
+    var board = ParseInput(input);
+    var start = ParseInputFindStart(board);
+    var result = CountSplitsWithTime(start, board, new());
+    
+    Console.WriteLine($"result: {result}");
   }
 
   private static readonly Position DirectionOffset = (0, 1);
 
-  private static int CountSplits(Position start, char[][] board, int splits = 0)
+  private static int CountSplits(Position start, char[][] board)
   {
     var queue = new Queue<Position>([start]);
     var result = 0;
+    // queue style
     while (queue.Count > 0)
     {
       var currentPosition = queue.Dequeue();
@@ -43,6 +48,32 @@ public class Day7 : Day
       result += 1;
     }
     return result;
+  }
+
+  private static long CountSplitsWithTime(Position currentPosition, char[][] board, Dictionary<Position, long> memo)
+  {
+    // recursive style
+    while (true)
+    {
+      Position nextPosition = (currentPosition.X + DirectionOffset.X, currentPosition.Y + DirectionOffset.Y);
+      if (memo.TryGetValue(nextPosition, out var value2)) return value2;
+      
+      if (nextPosition.Y >= board.Length || nextPosition.X < 0 || nextPosition.X >= board.First().Length)
+      {
+        memo[currentPosition] = 1;
+        return 1;
+      }
+
+      if (board[nextPosition.Y][nextPosition.X] != '^')
+      {
+        currentPosition = nextPosition;
+        continue;
+      }
+      var left = CountSplitsWithTime((nextPosition.X - 1, nextPosition.Y), board, memo);      
+      var right = CountSplitsWithTime((nextPosition.X + 1, nextPosition.Y), board, memo);      
+      memo[currentPosition] = left + right;
+      return left + right;
+    }
   }
 
   private static char[][] ParseInput(string input) =>

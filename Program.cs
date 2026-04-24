@@ -13,6 +13,7 @@ Dictionary<string, Dictionary<string, Day>> solutions = new()
       { "5",  new Day5() },
       { "6",  new Day6() },
       { "7",  new Day7() },
+      { "8",  new Day8() },
     } 
   },
 };
@@ -35,6 +36,7 @@ try
 catch (Exception e)
 {
   Console.WriteLine(e.Message);
+  Console.WriteLine(e.StackTrace);
 }
 finally
 {
